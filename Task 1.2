@@ -1,10 +1,10 @@
 void setup() {
-  DDRB |= (1 << DDB5);
+  DDRB |= (1 << DDB5);               // DDRB =>Data Direction Register for Port B, it set bit 5 to 1 which will make pin 13 (PB5) an output.
 }
 
 void loop() {
-  PORTB |= (1 << PORTB5);
-  delay(500);
-  PORTB &= ~(1 << PORTB5);
-  delay(500);
+  PORTB |= (1 << PORTB5);         // Set bit 5 to 1 which will turn LED on
+  delay(500);                    // Wait 0.5s in state of LED on
+  PORTB &= ~(1 << PORTB5);      // Set bit 5 to 0 which will turn LED off
+  delay(500);                  // Wait 0.5s in state of LED off
 } 
