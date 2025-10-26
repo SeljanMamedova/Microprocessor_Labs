@@ -1,0 +1,41 @@
+#define LED PB5                                                   //  We define (PB5) as the digital Pin 13 on Arduino Uno
+
+void setup() {
+                         
+  DDRB |= (1 << LED);                                          // Set LED pin as output using Data Direction Register B (DDRB)
+}
+
+void loop() {
+
+// It is method 1 which we use just direct assignment 
+  
+  
+  PORTB = 0b00100000;                                      // LED ON (PB5 = 1)
+  delay(500);
+  PORTB = 0b00000000;                                    // LED OFF (PB5 = 0)
+  delay(500);
+
+
+
+// It is method 2 where we use  bit set or clear (masking)
+  
+  PORTB |= (1 << LED);                             // Set bit PB5 high (LED ON),it means assign or set PB5 to 1
+  delay(500);
+  PORTB &= ~(1 << LED);                          // Clear bit PB5 low (LED OFF),it means assign or set PB5 to 0
+  delay(500);
+
+  // It is method 3, bit toggle using xor or pin register
+  
+  PORTB ^= (1 << LED);                        // Toggle LED (invert PB5),if it is on invert to off,or vice-versa if it is off invert to on
+  delay(500);
+  PORTB ^= (1 << LED);                      // Toggle again
+  delay(500);
+
+  // It is method 4, using shift operation 
+ 
+  uint8_t mask = (1 << 5);               // Shift 1 left by 5 → same as 0b00100000
+  PORTB |= mask;                        // LED ON
+  delay(500);
+  PORTB &= ~mask;                     // LED OFF
+  delay(500);
+}
