@@ -1,10 +1,10 @@
 void setup() {
-  pinMode(13, OUTPUT);
+  pinMode(13, OUTPUT);           // In this line with the help of pinMode() we have configured digital pin 13 as an output pin.
 }
 
 void loop() {
-  digitalWrite(13, HIGH);
-  delay(500);
-  digitalWrite(13, LOW);
-  delay(500);
+  digitalWrite(13, HIGH);      // Turn the LED on which means, we simply apply +5V to pin 13
+  delay(500);                 // Keep it on for 0.5 seconds
+  digitalWrite(13, LOW);     //Turn the LED off which means, we simply apply OV to pin 13
+  delay(500);               // Keep it off for 0.5 seconds
 }
