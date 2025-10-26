@@ -1,0 +1,11 @@
+void setup() {
+  DDRB |= (1 << DDB5);                // Set pin PB5 as output, here PB5 means the digital pin 13, onboard LED 
+  DDRD &= ~(1 << DDD2);              // Set pin PD2 as input which is button, here PD2 means the digital pin 2
+}
+
+void loop() {
+  if (PIND & (1 << PIND2)) {      // We are checking that if button connected to PD2 when pressed
+    PORTB ^= (1 << PORTB5);      // Toggle LED state, it change on to off, or off to on
+    delay(500);                 // Small delay 
+  }
+}
