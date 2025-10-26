@@ -1,16 +1,16 @@
 void setup() {
   Serial.begin(9600);   
 
-  uint8_t R12 = 50;                          // It is our first operand and here x = 50
-  uint8_t R13 = 200;                        // second operand, y = 200
+  uint8_t R16 = 50;                          // It is our first operand and here x = 50
+  uint8_t R17 = 200;                        // second operand, y = 200
   uint8_t R18;                             // Finally, it is our result register
 
-  R18 = R12 - R13;                       // In this line we subtract y from x, and then store it in R18
+  R18 = R16 - R17;                       // In this line we subtract y from x, and then store it in R18
 
-  Serial.print("R12 = ");
-  Serial.println(R12);
-  Serial.print("R13 = ");
-  Serial.println(R13);
+  Serial.print("R16 = ");
+  Serial.println(R16);
+  Serial.print("R17 = ");
+  Serial.println(R17);
   Serial.print("Result (R18) = ");
   Serial.println(R18);
 
@@ -21,7 +21,7 @@ void setup() {
     Serial.println("Zero Flag (Z) = 0");
   }
 
-  if (R12 < R13) {
+  if (R16 < R17) {
     Serial.println("Carry Flag (C) = 1 (Borrow occurred)");
   } else {
     Serial.println("Carry Flag (C) = 0");
