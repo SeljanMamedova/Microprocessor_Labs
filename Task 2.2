@@ -1,0 +1,15 @@
+void setup() {
+  Serial.begin(9600);                             // Initialize serial communication for output
+
+  uint8_t R16 = 5;                              // Assign X = 5 to register variable R16
+  uint8_t R17 = 8;                             // Assign Y = 8 to register variable R17
+  uint8_t R18;                                // Result register variable R18
+
+  R18 = R16 + R17;                          // Firstly add X and Y then store the result in R18
+
+  Serial.print("Result (R18) = ");
+  Serial.println(R18);                    // Display the result in Serial Monitor
+}
+
+void loop() {
+}
