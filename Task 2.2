@@ -1,15 +1,22 @@
 void setup() {
-  Serial.begin(9600);                             // Initialize serial communication for output
+  Serial.begin(9600);            
+  uint8_t result;                   // Create an 8-bit variable in RAM to hold the final result.
 
-  uint8_t R16 = 5;                              // Assign X = 5 to register variable R16
-  uint8_t R17 = 8;                             // Assign Y = 8 to register variable R17
-  uint8_t R18;                                // Result register variable R18
-
-  R18 = R16 + R17;                          // Firstly add X and Y then store the result in R18
+  asm volatile(
+   
+    "ldi r16, 5      \n\t"       // Load the value 5 into register r16.
+    "ldi r17, 8      \n\t"      // Load the value 8 into register r17.
+    "mov r18, r16    \n\t"      // r18 = 5.
+    "add r18, r17    \n\t"      // Add r17 to r18 
+    "sts %[res], r18 \n\t"      // store r18 into result variable
+    : [res] "=m" (result)       // output
+    :                          // no input
+    : "r16", "r17", "r18"       
+  );
+  
 
   Serial.print("Result (R18) = ");
-  Serial.println(R18);                    // Display the result in Serial Monitor
+  Serial.println(result);       // should display 13
 }
 
-void loop() {
-}
+void loop() {}                  // runs once and stops
