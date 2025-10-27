@@ -1,32 +1,29 @@
 void setup() {
-  Serial.begin(9600);   
+  Serial.begin(9600);              
 
-  uint8_t R16 = 50;                          // It is our first operand and here x = 50
-  uint8_t R17 = 200;                        // second operand, y = 200
-  uint8_t R18;                             // Finally, it is our result register
+  uint8_t X = 50;                  
+  uint8_t Y = 200;                 
+  uint8_t R18;                                        // Result register 
 
-  R18 = R16 - R17;                       // In this line we subtract y from x, and then store it in R18
+  R18 = X - Y;                                      // Perform subtraction 
 
-  Serial.print("R16 = ");
-  Serial.println(R16);
-  Serial.print("R17 = ");
-  Serial.println(R17);
-  Serial.print("Result (R18) = ");
-  Serial.println(R18);
+  Serial.print("Result (R18) = "); 
+  Serial.println(R18);                            // Show the subtraction result
 
-                                    // Here flags analyzed
-  if (R18 == 0) {
-    Serial.println("Zero Flag (Z) = 1");
+  if (R18 == 0) {                               // If result equals zero
+    Serial.println("Zero flag (Z) = 1");       // Z flag set if the result is zero
   } else {
-    Serial.println("Zero Flag (Z) = 0");
+    Serial.println("Zero flag (Z) = 0");      // Z flag clear if the result not zero
   }
 
-  if (R16 < R17) {
-    Serial.println("Carry Flag (C) = 1 (Borrow occurred)");
+  
+  if (X < Y) {                              // If X < Y in that case borrow will occur in subtraction
+    Serial.println("Carry flag (C) = 1 (borrow occurred)");
   } else {
-    Serial.println("Carry Flag (C) = 0");
+    Serial.println("Carry flag (C) = 0");  // No borrow
   }
 }
 
 void loop() {
+  // Empty loop – all operations done in setup()
 }
