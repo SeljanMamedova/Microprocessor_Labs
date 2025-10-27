@@ -1,0 +1,44 @@
+#include <avr/io.h>
+
+#define LED1 PB1             // OC1A (Arduino D9)
+#define LED2 PB2            // OC1B (Arduino D10)
+#define LED3 PB3           // OC2A (Arduino D11)
+#define BUTTON PD5        // external clock for Timer1
+
+int main(void)
+{
+    // configure LEDs
+    DDRB |= (1 << LED1) | (1 << LED2) | (1 << LED3);
+    DDRD &= ~(1 << BUTTON);                                              // PD5 as input
+    PORTD |= (1 << BUTTON);                                             // enable pull-up
+
+    TCCR1A = (1 << COM1A1) | (1 << COM1B1) | (1 << WGM10);
+    TCCR1B = (1 << WGM12);  
+
+    TCCR2A = (1 << COM2A1) | (1 << WGM21) | (1 << WGM20);
+    TCCR2B = (1 << CS21) | (1 << CS20);                               // prescaler = 32
+
+
+    TCCR1B |= (1 << CS12) | (1 << CS11) | (1 << CS10);              // clock on rising edge
+    TCNT1 = 0;                                                     // clear count
+
+    uint8_t prev = 255;
+
+    while (1)
+    {
+        uint8_t count = TCNT1;                                 // read counter value
+
+        if (count != prev)
+        {
+            prev = count;
+            uint8_t step = count % 12;  // 12 total presses
+            uint8_t level = ((step % 4) + 1) * 64;
+
+            if (step < 4) { OCR1A = level; OCR1B = 0; OCR2A = 0; }      // LED1
+            else if (step < 8) { OCR1A = 0; OCR1B = level; OCR2A = 0; } // LED2
+            else { OCR1A = 0; OCR1B = 0; OCR2A = level; }               // LED3
+
+            if (count >= 12) TCNT1 = 0; // reset after 12 presses
+        }
+    }
+}
