@@ -33,7 +33,7 @@ void loop() {
 
   // It is method 4, using shift operation 
  
-  uint8_t mask = (1 << 5);               // Shift 1 left by 5 → same as 0b00100000
+  uint8_t mask = (1 << 5);               // Shift 1 left by 5 same as 0b00100000
   PORTB |= mask;                        // LED ON
   delay(500);
   PORTB &= ~mask;                     // LED OFF
