@@ -1,137 +1,79 @@
-// I2C MASTER – Arduino Uno
+//Code for Master
 
 #include <Wire.h>
 
-// I2C slave address
-#define SLAVE_ADDR 0x08
+#define SLAVE_ADDR 0x08                  // I2C slave address
+#define NUM_MESSAGES 50                  // number of messages to send
 
-// Number of messages to send
-#define NUM_MESSAGES 50
-
-// ----------------------------------------------------
-// Setup function (runs once)
-// ----------------------------------------------------
 void setup() {
-  // Initialize serial communication
-  Serial.begin(9600);
+  Serial.begin(9600);                    // initialize serial communication
 
-  // ---- SET I2C SPEED HERE ----
+  TWSR &= ~((1 << TWPS0) | (1 << TWPS1)); // set I2C prescaler to 1
 
-  // Set TWI prescaler to 1 (TWPS1=0, TWPS0=0)
-  TWSR &= ~((1 << TWPS0) | (1 << TWPS1));
+  // TWBR = 312;                         // 25 kHz I2C clock
+  // TWBR = 72;                          // 100 kHz I2C clock
+  // TWBR = 12;                          // 400 kHz I2C clock
 
-  // Choose ONE I2C clock speed by setting TWBR
-  // TWBR = 312;   // ~25 kHz I2C clock
-  // TWBR = 72;    // ~100 kHz I2C clock
-  // TWBR = 12;    // ~400 kHz I2C clock
-
-  // Initialize I2C as MASTER
-  Wire.begin();
+  Wire.begin();                          // initialize I2C as master
 }
 
-// ----------------------------------------------------
-// Main loop
-// ----------------------------------------------------
 void loop() {
-  // Record start time
-  unsigned long startTime = millis();
+  unsigned long startTime = millis();    // record start time
 
-  // Send and receive NUM_MESSAGES times
-  for (int i = 0; i < NUM_MESSAGES; i++) {
+  for (int i = 0; i < NUM_MESSAGES; i++) { 
 
-    // Send one byte to SLAVE
-    Wire.beginTransmission(SLAVE_ADDR);
-    Wire.write(1);                // send dummy data
-    Wire.endTransmission();       // end transmission
+    Wire.beginTransmission(SLAVE_ADDR);         // start transmission to slave
+    Wire.write(1);                              // send dummy data
+    Wire.endTransmission();                          // end transmission
 
-    // Request one byte from SLAVE
-    Wire.requestFrom(SLAVE_ADDR, 1);
-
-    // Read received byte (if available)
-    while (Wire.available()) {
-      Wire.read();
+    Wire.requestFrom(SLAVE_ADDR, 1);    
+    while (Wire.available()) {          // wait for received data
+      Wire.read();                      // read received byte
     }
   }
 
-  // Record end time
-  unsigned long endTime = millis();
+  unsigned long endTime = millis();      
 
-  // Print total time for sending 50 messages
-  Serial.print("Time for 50 messages: ");
-  Serial.print(endTime - startTime);
-  Serial.println(" ms");
+  Serial.print("Time for 50 messages: "); 
+  Serial.print(endTime - startTime);             // calculate elapsed time
+  Serial.println(" ms");                        // print time unit
 
-  // Wait before repeating measurement
-  delay(3000);
+  delay(3000);                                 // wait before next measurement
 }
 
 
 //Code for Slave
 
+#include <Wire.h>                       
 
-// I2C SLAVE – Arduino Uno
-
-#include <Wire.h>
-
-// I2C slave address
 #define SLAVE_ADDR 0x08
+#define BUTTON_PIN 2                             // button pin (active LOW)
+#define LED_PIN 3                               // LED pin
 
-// Button pin (active LOW)
-#define BUTTON_PIN 2
+volatile uint8_t receivedData = 0;              // store data received from master
 
-// LED pin
-#define LED_PIN 3
-
-// Variable to store data received from MASTER
-volatile uint8_t receivedData = 0;
-
-// ----------------------------------------------------
-// Called automatically when MASTER sends data
-// ----------------------------------------------------
-void receiveEvent(int howMany) {
-  // Check if data is available from master
-  if (Wire.available()) {
-    receivedData = Wire.read();          // read received byte
-
-    // Control LED based on received value
-    digitalWrite(LED_PIN, receivedData ? HIGH : LOW);
+void receiveEvent(int howMany) {                 // called when master sends data
+  if (Wire.available()) {                          // check if data is available
+    receivedData = Wire.read();                      // read received byte
+    digitalWrite(LED_PIN, receivedData ? HIGH : LOW);         // control LED
   }
 }
 
-// ----------------------------------------------------
-// Called automatically when MASTER requests data
-// ----------------------------------------------------
-void requestEvent() {
-  // Read button state (LOW when pressed)
-  // Convert to 1 when pressed, 0 when not pressed
+void requestEvent() {                                        // called when master requests data
   uint8_t buttonState = (digitalRead(BUTTON_PIN) == LOW) ? 1 : 0;
-
-  // Send button state back to MASTER
-  Wire.write(buttonState);
+  Wire.write(buttonState);                                 // send button state to master
 }
 
-// ----------------------------------------------------
-// Setup function (runs once)
-// ----------------------------------------------------
 void setup() {
-  // Initialize I2C as SLAVE with address 0x08
-  Wire.begin(SLAVE_ADDR);
+  Wire.begin(SLAVE_ADDR);               
 
-  // Register receive and request interrupt handlers
-  Wire.onReceive(receiveEvent);
+  Wire.onReceive(receiveEvent);          
   Wire.onRequest(requestEvent);
 
-  // Configure button pin as input with internal pull-up
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
-
-  // Configure LED pin as output
-  pinMode(LED_PIN, OUTPUT);
+  pinMode(BUTTON_PIN, INPUT_PULLUP);                  // configure button pin
+  pinMode(LED_PIN, OUTPUT);                               // configure LED pin
 }
 
-// ----------------------------------------------------
-// Main loop
-// ----------------------------------------------------
 void loop() {
-  // Nothing needed here
-  // I2C communication handled by interrupts
+  // nothing required here, I2C handled by interrupts
 }
