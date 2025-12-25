@@ -1,70 +1,47 @@
-#include <Arduino.h>
+#include <Arduino.h>                    
 
-// Number of prime numbers to find
-#define PRIME_TARGET 2000
+#define PRIME_TARGET 2000                     // number of prime numbers to find
 
-// ----------------------------------------------------
-// Function to check if a number is prime
-// Returns 1 if prime, 0 if not prime
-// ----------------------------------------------------
-uint8_t isPrime(uint16_t n) {
-  // Numbers less than 2 are not prime
-  if (n < 2) return 0;
+uint8_t isPrime(uint16_t n) {             // function to check if number is prime
+  if (n < 2) return 0;                    // numbers less than 2 are not prime
 
-  // 2 is the only even prime
-  if (n == 2) return 1;
+  if (n == 2) return 1;                   
 
-  // Even numbers greater than 2 are not prime
-  if ((n & 1) == 0) return 0;
+  if ((n & 1) == 0) return 0;             
 
-  // Check odd divisors up to sqrt(n)
-  for (uint16_t d = 3; (uint32_t)d * d <= n; d += 2) {
+  for (uint16_t d = 3; (uint32_t)d * d <= n; d += 2) {             // test odd divisors up to sqrt(n)
     if (n % d == 0)
-      return 0;   // not prime
+      return 0;                                                    // divisible, not prime
   }
 
-  // Number is prime
-  return 1;
+  return 1;                                                    // number is prime
 }
 
-// ----------------------------------------------------
-// Setup function (runs once)
-// ----------------------------------------------------
 void setup() {
-  // Set PB5 (onboard LED) as OUTPUT
-  DDRB |= (1 << PB5);
+  DDRB |= (1 << PB5);                                 // set PB5 (onboard LED) as output
 
-  uint16_t count = 0;   // number of primes found
-  uint16_t n = 2;       // number to test for primality
+  uint16_t count = 0;                               // counter for primes found
+  uint16_t n = 2;                                    // starting number to test
 
-  // Start high-resolution timing (microseconds)
-  unsigned long startTime = micros();
+  unsigned long startTime = micros();                 // record start time in microseconds
 
-  // Find PRIME_TARGET number of primes
-  while (count < PRIME_TARGET) {
-    if (isPrime(n)) {
-      PORTB ^= (1 << PB5);   // toggle LED for each prime found
-      count++;               // increment prime counter
+  while (count < PRIME_TARGET) {                      // loop until required primes are found
+    if (isPrime(n)) {                                   // check if current number is prime
+      PORTB ^= (1 << PB5);                                // toggle LED for each prime found
+      count++;                                         // increment prime counter
     }
-    n++;                     // move to next number
+    n++;                                  // check next number
   }
 
-  // Stop timing
-  unsigned long endTime = micros();
+  unsigned long endTime = micros();                // record end time
 
-  // Calculate total execution time
-  unsigned long elapsed = endTime - startTime;
+  unsigned long elapsed = endTime - startTime;          // calculate execution time
 
-  // Store execution time (useful for debugging)
-  volatile unsigned long executionTime = elapsed;
+  volatile unsigned long executionTime = elapsed; 
 
-  // Stop program after computation finishes
-  while (1) {}
+  while (1) {}                                              // stop program after computation
 }
 
-// ----------------------------------------------------
-// Main loop (not used)
-// ----------------------------------------------------
 void loop() {
-  // nothing here
+
 }
