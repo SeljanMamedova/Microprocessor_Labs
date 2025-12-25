@@ -1,45 +1,27 @@
 //Code For Master 
 
-// Secret key used for XOR encryption
-#define SECRET_KEY 0x5A
+#define SECRET_KEY 0x5A                  
 
-// Counter value to be encrypted and sent
-uint8_t counter = 0;
+uint8_t counter = 0;                    // counter value to be encrypted and sent
 
-// ----------------------------------------------------
-// Simple XOR encryption function
-// ----------------------------------------------------
-uint8_t encrypt(uint8_t plain) {
-  // XOR plaintext with secret key
-  return plain ^ SECRET_KEY;
+uint8_t encrypt(uint8_t plain) {        // simple XOR encryption function
+  return plain ^ SECRET_KEY;            // encrypt plaintext using XOR
 }
 
-// ----------------------------------------------------
-// Setup function (runs once)
-// ----------------------------------------------------
 void setup() {
-  // Initialize UART serial communication
-  Serial.begin(9600);
+  Serial.begin(9600);                   // initialize UART serial communication
 }
 
-// ----------------------------------------------------
-// Main loop
-// ----------------------------------------------------
 void loop() {
-  // Use counter value as plaintext
-  uint8_t plaintext = counter;
+  uint8_t plaintext = counter;          // use counter as plaintext data
 
-  // Encrypt plaintext
-  uint8_t ciphertext = encrypt(plaintext);
+  uint8_t ciphertext = encrypt(plaintext);              // encrypt plaintext
 
-  // Send encrypted byte over UART
-  Serial.write(ciphertext);
+  Serial.write(ciphertext);                          // send encrypted byte over UART
 
-  // Increment counter for next transmission
-  counter++;
+  counter++;                                            // increment counter for next send
 
-  // Small delay between transmissions (0.1 seconds)
-  delay(100);
+  delay(100);                                             // delay 0.1 seconds 
 }
 
 
@@ -47,41 +29,23 @@ void loop() {
 
 //Code For Slave
 
-// Secret key used for XOR decryption
-#define SECRET_KEY 0x5A
+#define SECRET_KEY 0x5A                 // secret key for XOR decryption
 
-// ----------------------------------------------------
-// Simple XOR decryption function
-// ----------------------------------------------------
-uint8_t decrypt(uint8_t cipher) {
-  // XOR ciphertext with secret key
-  // (same operation as encryption)
-  return cipher ^ SECRET_KEY;
+uint8_t decrypt(uint8_t cipher) {       // simple XOR decryption function
+  return cipher ^ SECRET_KEY;          
 }
 
-// ----------------------------------------------------
-// Setup function (runs once)
-// ----------------------------------------------------
 void setup() {
-  // Initialize UART serial communication for receiving data
-  Serial.begin(9600);
+  Serial.begin(9600);                   
 }
 
-// ----------------------------------------------------
-// Main loop
-// ----------------------------------------------------
 void loop() {
-  // Check if data is available on serial buffer
-  if (Serial.available() > 0) {
-    // Read encrypted byte from UART
-    uint8_t cipher = Serial.read();
+  if (Serial.available() > 0) {                           // check if data is available
+    uint8_t cipher = Serial.read();                      // read encrypted byte from UART
 
-    // Decrypt received data
-    uint8_t plain = decrypt(cipher);
+    uint8_t plain = decrypt(cipher);                    // decrypt received data
 
-    // Print decrypted value to Serial Monitor
-    Serial.print("Decrypted value: ");
-    Serial.println(plain);
+    Serial.print("Decrypted value: ");                     // print label
+    Serial.println(plain);                                 // print decrypted value
   }
 }
-
