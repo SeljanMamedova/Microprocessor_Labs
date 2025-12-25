@@ -9,7 +9,7 @@ void uart_init() {
     UBRR0H = (uint8_t)(UBRR_VALUE >> 8);
     UBRR0L = (uint8_t)(UBRR_VALUE & 0xFF);
     UCSR0B = (1 << TXEN0) | (1 << RXEN0);
-    UCSR0C = (1 << UCSZ01) | (1 << UCSZ00); // 8-bit data
+    UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);    // 8-bit data
 }
 
 void uart_transmit(uint8_t data) {
@@ -26,11 +26,11 @@ int main(void) {
     uart_init();
 
     while (1) {
-        uint8_t val = uart_receive();   // read from PC terminal
+        uint8_t val = uart_receive();      // read from PC terminal
 
         // valid inputs: 1,2,3,4
         if (val == '1' || val == '2' || val == '3' || val == '4') {
-            uart_transmit(val);         // send to slave
+            uart_transmit(val);            // send to slave
         }
     }
 }
@@ -74,7 +74,7 @@ void led_on(uint8_t val) {
 }
 
 int main(void) {
-    DDRD |= (1 << LED1) | (1 << LED2) | (1 << LED3); // LEDs as output
+    DDRD |= (1 << LED1) | (1 << LED2) | (1 << LED3);                // LEDs as output
     uart_init();
 
     uint8_t eeprom_index = 0;
@@ -89,7 +89,7 @@ int main(void) {
             eeprom_index++;
         }
 
-        // STOP & PLAYBACK
+        
         else if (val == '4') {
             storing = 0;
 
