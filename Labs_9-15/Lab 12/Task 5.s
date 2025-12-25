@@ -1,125 +1,68 @@
 //Code For Master 
 
-#include <Wire.h>
+#include <Wire.h>                                   // I2C library
 
-// I2C slave address (Board B)
-#define SLAVE_ADDR 0x08
+#define SLAVE_ADDR 0x08                  
+#define BUTTON_PIN 2                              // push button pin (active LOW)
+#define LED_PIN 8                       
 
-// Push button pin (active LOW)
-#define BUTTON_PIN 2
-
-// LED pin
-#define LED_PIN 8
-
-// ----------------------------------------------------
-// Setup function (runs once)
-// ----------------------------------------------------
 void setup() {
-  // Initialize I2C as MASTER (no address needed)
-  Wire.begin();
+  Wire.begin();                                  // initialize I2C as master
 
-  // Configure button pin as input with internal pull-up
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
-
-  // Configure LED pin as output
-  pinMode(LED_PIN, OUTPUT);
+  pinMode(BUTTON_PIN, INPUT_PULLUP);           // configure button pin with pull-up
+  pinMode(LED_PIN, OUTPUT);                    // configure LED pin as output
 }
 
-// ----------------------------------------------------
-// Main loop
-// ----------------------------------------------------
 void loop() {
-  // Read button state (LOW when pressed)
-  // Convert to 1 when pressed, 0 when not pressed
-  uint8_t buttonState = (digitalRead(BUTTON_PIN) == LOW) ? 1 : 0;
+  uint8_t buttonState = (digitalRead(BUTTON_PIN) == LOW) ? 1 : 0;        // read button state
 
-  // Send button state to SLAVE (Board B)
-  Wire.beginTransmission(SLAVE_ADDR);
-  Wire.write(buttonState);          // send one byte
-  Wire.endTransmission();           // end transmission
+  Wire.beginTransmission(SLAVE_ADDR);                                   // start transmission to slave
+  Wire.write(buttonState);                                             // send button state (1 byte)
+  Wire.endTransmission();                                             // end transmission
 
-  // Request one byte back from SLAVE
-  Wire.requestFrom(SLAVE_ADDR, 1);
+  Wire.requestFrom(SLAVE_ADDR, 1);                                   // request 1 byte from slave
 
-  // If data is available from slave
-  if (Wire.available()) {
-    uint8_t received = Wire.read(); // read received data
-
-    // Control LED based on received value
-    digitalWrite(LED_PIN, received ? HIGH : LOW);
+  if (Wire.available()) {                                           // check if slave sent data
+    uint8_t received = Wire.read();                                // read received byte
+    digitalWrite(LED_PIN, received ? HIGH : LOW);                 // control LED based on received data
   }
 
-  // Small delay to slow down communication
-  delay(100);
+  delay(100);                                                  // small delay 
 }
 
 
 //Code For Slave
 
-// I2C SLAVE – Arduino Uno
+#include <Wire.h>                       
 
-#include <Wire.h>
-
-// I2C slave address
-#define SLAVE_ADDR 0x08
-
-// Button pin (active LOW)
-#define BUTTON_PIN 2
-
-// LED pin
+#define SLAVE_ADDR 0x08                  
+#define BUTTON_PIN 2                    
 #define LED_PIN 3
 
-// Variable to store data received from MASTER
-volatile uint8_t receivedData = 0;
+volatile uint8_t receivedData = 0;                            // store data received from master
 
-// ----------------------------------------------------
-// Called automatically when MASTER sends data
-// ----------------------------------------------------
-void receiveEvent(int howMany) {
-  // Check if data is available from master
-  if (Wire.available()) {
-    receivedData = Wire.read();          // read received byte
-
-    // Control LED based on received value
-    digitalWrite(LED_PIN, receivedData ? HIGH : LOW);
+void receiveEvent(int howMany) {                             // called when master sends data
+  if (Wire.available()) {                                   // check if data is available
+    receivedData = Wire.read();                            // read received byte
+    digitalWrite(LED_PIN, receivedData ? HIGH : LOW);     // control LED
   }
 }
 
-// ----------------------------------------------------
-// Called automatically when MASTER requests data
-// ----------------------------------------------------
-void requestEvent() {
-  // Read button state (LOW when pressed)
-  // Convert to 1 when pressed, 0 when not pressed
-  uint8_t buttonState = (digitalRead(BUTTON_PIN) == LOW) ? 1 : 0;
-
-  // Send button state back to MASTER
-  Wire.write(buttonState);
+void requestEvent() {                                  // called when master requests data
+  uint8_t buttonState = (digitalRead(BUTTON_PIN) == LOW) ? 1 : 0; 
+  Wire.write(buttonState);                            // send button state to master
 }
 
-// ----------------------------------------------------
-// Setup function (runs once)
-// ----------------------------------------------------
 void setup() {
-  // Initialize I2C as SLAVE with address 0x08
-  Wire.begin(SLAVE_ADDR);
+  Wire.begin(SLAVE_ADDR);               
 
-  // Register receive and request interrupt handlers
-  Wire.onReceive(receiveEvent);
-  Wire.onRequest(requestEvent);
+  Wire.onReceive(receiveEvent);                   // register receive handler
+  Wire.onRequest(requestEvent);                  // register request handler
 
-  // Configure button pin as input with internal pull-up
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
-
-  // Configure LED pin as output
-  pinMode(LED_PIN, OUTPUT);
+  pinMode(BUTTON_PIN, INPUT_PULLUP);            // configure button pin
+  pinMode(LED_PIN, OUTPUT);                    // configure LED pin
 }
 
-// ----------------------------------------------------
-// Main loop
-// ----------------------------------------------------
 void loop() {
-  // Nothing needed here
-  // I2C communication handled by interrupts
+  // nothing required here, communication handled by interrupts
 }
-
